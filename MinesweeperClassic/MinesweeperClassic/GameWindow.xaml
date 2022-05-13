@@ -1,0 +1,36 @@
+﻿<Window
+    x:Class="MinesweeperClassic.GameWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MinesweeperClassic"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel x:Name="MainUIStack"  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#c3c3c3">
+        <StackPanel x:Name="ResetPanelStack" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <Image x:Name="ResetIcon" 
+                   HorizontalAlignment="Center" 
+                   PointerPressed="ResetIcon_PointerPressed"
+                   PointerReleased="ResetIcon_PointerReleased"
+                   PointerCanceled="ResetIcon_PointerCanceled"
+                   PointerCaptureLost="ResetIcon_PointerCanceled"
+                   PointerExited="ResetIcon_PointerCanceled"/>
+        </StackPanel>
+
+        <Border x:Name="GameBoardBorder" BorderThickness="1" BorderBrush="#808080">
+            <Canvas x:Name="GameBoardCanvas" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Top"
+                    PointerPressed="GameBoardCanvas_PointerPressed"
+                    PointerReleased="GameBoardCanvas_PointerReleased"
+                    PointerCanceled="GameBoardCanvas_PointerCanceled"
+                    PointerCaptureLost="GameBoardCanvas_PointerCanceled"
+                    PointerExited="GameBoardCanvas_PointerCanceled">
+
+            </Canvas>
+        </Border>
+
+
+    </StackPanel>
+</Window>
