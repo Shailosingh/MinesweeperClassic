@@ -162,11 +162,13 @@ namespace MinesweeperClassic
             if(BoardObject.GameIsWon())
             {
                 ResetIcon.Source = ResetImageMap["sunglasses"];
+                Title = "Minesweeper Classic (VICTORY)";
             }
 
             else if(BoardObject.GameIsLost())
             {
                 ResetIcon.Source = ResetImageMap["dead"];
+                Title = "Minesweeper Classic (DEFEAT)";
             }
 
             else
@@ -205,6 +207,7 @@ namespace MinesweeperClassic
             {
                 BoardObject.Reset();
                 RepaintGameWindow();
+                Title = "Minesweeper Classic";
                 LeftClickHeld = false;
             }
 
