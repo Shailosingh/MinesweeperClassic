@@ -8,7 +8,16 @@
     mc:Ignorable="d">
 
     <StackPanel x:Name="MainUIStack"  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Background="#c3c3c3">
-        <StackPanel x:Name="ResetPanelStack" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <StackPanel x:Name="ResetPanelStack" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <Image x:Name="HundredsPlaceMine"
+                   HorizontalAlignment="Left"/>
+
+            <Image x:Name="TensPlaceMine"
+                   HorizontalAlignment="Left"/>
+
+            <Image x:Name="OnesPlaceMine"
+                   HorizontalAlignment="Left"/>
+
             <Image x:Name="ResetIcon" 
                    HorizontalAlignment="Center" 
                    PointerPressed="ResetIcon_PointerPressed"

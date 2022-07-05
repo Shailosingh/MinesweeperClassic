@@ -31,6 +31,8 @@ namespace MinesweeperClassic
         //Constants
         public static int GRID_SQUARE_LENGTH { get; private set; } = 16;
         public static int RESET_SQUARE_LENGTH { get; private set; } = 24;
+        public static int DISPLAY_SQUARE_WIDTH { get; private set; } = 13;
+        public static int DISPLAY_SQUARE_HEIGHT { get; private set; } = 23;
 
         //Window properties
         public int WindowWidth { get; private set; }
@@ -39,6 +41,7 @@ namespace MinesweeperClassic
         //Utility variables for window
         public Dictionary<string, BitmapImage> ResetImageMap { get; private set; }
         public Dictionary<int, BitmapImage> GridImageMap { get; private set; }
+        public Dictionary<int, BitmapImage> DisplayImageMap { get; private set; }
         public bool LeftClickHeld { get; private set; } = false;
         public bool RightClickHeld { get; private set; } = false;
         public bool MiddleClickHeld { get; private set; } = false;
@@ -97,11 +100,27 @@ namespace MinesweeperClassic
             ResetPanelStack.Height = resetPanelHeight;
             ResetPanelStack.Width = WindowWidth;
 
+            //Setup the mine counter images
+            HundredsPlaceMine.Width = DISPLAY_SQUARE_WIDTH;
+            HundredsPlaceMine.Height = DISPLAY_SQUARE_HEIGHT;
+            HundredsPlaceMine.Source = DisplayImageMap[0];
+            HundredsPlaceMine.Margin = new Thickness(1+GRID_SQUARE_LENGTH, 0, 0, 0);
+
+            TensPlaceMine.Width = DISPLAY_SQUARE_WIDTH;
+            TensPlaceMine.Height = DISPLAY_SQUARE_HEIGHT;
+            TensPlaceMine.Source = DisplayImageMap[0];
+            TensPlaceMine.Margin = new Thickness(0, 0, 0, 0);
+
+            OnesPlaceMine.Width = DISPLAY_SQUARE_WIDTH;
+            OnesPlaceMine.Height = DISPLAY_SQUARE_HEIGHT;
+            OnesPlaceMine.Source = DisplayImageMap[0];
+            OnesPlaceMine.Margin = new Thickness(0, 0, 0, 0);
+
             //Setup ResetIcon
             ResetIcon.Width = RESET_SQUARE_LENGTH;
             ResetIcon.Height = RESET_SQUARE_LENGTH;
             ResetIcon.Source = ResetImageMap["smile"];
-            ResetIcon.Margin = new Thickness(0, GRID_SQUARE_LENGTH / 2, 0, GRID_SQUARE_LENGTH / 2);
+            ResetIcon.Margin = new Thickness(gridWidth/2 - RESET_SQUARE_LENGTH/2 - 3*DISPLAY_SQUARE_WIDTH, 0, 0, 0);
 
             //Setup the Game Board canvas to proper sizes and margins
             GameBoardCanvas.Width = gridWidth;
@@ -127,6 +146,8 @@ namespace MinesweeperClassic
                 //Add it to canvas
                 GameBoardCanvas.Children.Add(currentGridCell);
             }
+
+            RepaintGameWindow();
         }
 
         private void PreloadImages()
@@ -154,6 +175,21 @@ namespace MinesweeperClassic
             GridImageMap.Add(10,new BitmapImage(new Uri("ms-appx:///Images/Grid/highlight.bmp")));
             GridImageMap.Add(11,new BitmapImage(new Uri("ms-appx:///Images/Grid/mine.bmp")));
             GridImageMap.Add(12,new BitmapImage(new Uri("ms-appx:///Images/Grid/cell.bmp")));
+
+            //The map that maps integers to their Display (7-segment display) images
+            DisplayImageMap = new Dictionary<int, BitmapImage>();
+            DisplayImageMap.Add(0, new BitmapImage(new Uri("ms-appx:///Images/Display/0.png")));
+            DisplayImageMap.Add(1, new BitmapImage(new Uri("ms-appx:///Images/Display/1.png")));
+            DisplayImageMap.Add(2, new BitmapImage(new Uri("ms-appx:///Images/Display/2.png")));
+            DisplayImageMap.Add(3, new BitmapImage(new Uri("ms-appx:///Images/Display/3.png")));
+            DisplayImageMap.Add(4, new BitmapImage(new Uri("ms-appx:///Images/Display/4.png")));
+            DisplayImageMap.Add(5, new BitmapImage(new Uri("ms-appx:///Images/Display/5.png")));
+            DisplayImageMap.Add(6, new BitmapImage(new Uri("ms-appx:///Images/Display/6.png")));
+            DisplayImageMap.Add(7, new BitmapImage(new Uri("ms-appx:///Images/Display/7.png")));
+            DisplayImageMap.Add(8, new BitmapImage(new Uri("ms-appx:///Images/Display/8.png")));
+            DisplayImageMap.Add(9, new BitmapImage(new Uri("ms-appx:///Images/Display/9.png")));
+            DisplayImageMap.Add(10, new BitmapImage(new Uri("ms-appx:///Images/Display/blank.png")));
+            DisplayImageMap.Add(11, new BitmapImage(new Uri("ms-appx:///Images/Display/dash.png")));
         }
 
         private void RepaintGameWindow()
@@ -184,6 +220,18 @@ namespace MinesweeperClassic
                     ((Image)GameBoardCanvas.Children[(rowIndex * (int)(BoardObject.NumberOfRows)) + colIndex]).Source = GridImageMap[BoardObject.CellVisualStatus(rowIndex, colIndex)];
                 }
             }
+
+            //Update mine count display
+            int remainingMines = BoardObject.GetRemainingFlags();
+            int hundredsPlace = remainingMines / 100;
+            HundredsPlaceMine.Source = DisplayImageMap[hundredsPlace];
+            remainingMines -= hundredsPlace*100;
+            int tensPlace = remainingMines / 10;
+            TensPlaceMine.Source = DisplayImageMap[tensPlace];
+            remainingMines -= tensPlace*10;
+            int onesPlace = remainingMines;
+            OnesPlaceMine.Source = DisplayImageMap[onesPlace];
+
         }
 
         //Event handlers----------------------------------------------------------------------------------------------------------
