@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -46,6 +47,14 @@ namespace MinesweeperClassic
         public bool RightClickHeld { get; private set; } = false;
         public bool MiddleClickHeld { get; private set; } = false;
         public int SelectedGridCellIndex { get; private set; } = -1;
+
+        //Timer thread tracker and variables
+        public Thread TimerThread { get; private set; }
+        public bool TimerRunning { get; private set; } = false; 
+        public bool GameRunning { get; private set; } = true;
+        public int TimerHundredsPlace { get; private set; }
+        public int TimerTensPlace { get; private set; }
+        public int TimerOnesPlace { get; private set; } 
 
         //Board backend object
         private Board BoardObject;
@@ -127,6 +136,22 @@ namespace MinesweeperClassic
             GameBoardCanvas.Height = gridHeight;
             GameBoardCanvas.Margin = new Thickness(GRID_SQUARE_LENGTH / 2, 0, GRID_SQUARE_LENGTH / 2, 0);
 
+            //Setup timer images
+            HundredsPlaceTimer.Width = DISPLAY_SQUARE_WIDTH;
+            HundredsPlaceTimer.Height = DISPLAY_SQUARE_HEIGHT;
+            HundredsPlaceTimer.Source = DisplayImageMap[0];
+            HundredsPlaceTimer.Margin = new Thickness(gridWidth/2 - RESET_SQUARE_LENGTH/2 - 3*DISPLAY_SQUARE_WIDTH, 0, 0, 0);
+
+            TensPlaceTimer.Width = DISPLAY_SQUARE_WIDTH;
+            TensPlaceTimer.Height = DISPLAY_SQUARE_HEIGHT;
+            TensPlaceTimer.Source = DisplayImageMap[0];
+            TensPlaceTimer.Margin = new Thickness(0, 0, 0, 0);
+
+            OnesPlaceTimer.Width = DISPLAY_SQUARE_WIDTH;
+            OnesPlaceTimer.Height = DISPLAY_SQUARE_HEIGHT;
+            OnesPlaceTimer.Source = DisplayImageMap[0];
+            OnesPlaceTimer.Margin = new Thickness(0, 0, 0, 0);
+
             //Setup the Game Board's border
             GameBoardBorder.Width = gridWidth+1;
             GameBoardBorder.Height = gridHeight+2;
@@ -148,6 +173,13 @@ namespace MinesweeperClassic
             }
 
             RepaintGameWindow();
+
+            //Spinup timer thread
+            TimerThread = new Thread(TimerThreadMethod);
+            TimerThread.Start();
+
+            //Create exit handler
+            this.Closed += GameWindow_Closed;
         }
 
         private void PreloadImages()
@@ -199,12 +231,18 @@ namespace MinesweeperClassic
             {
                 ResetIcon.Source = ResetImageMap["sunglasses"];
                 Title = "Minesweeper Classic (VICTORY)";
+
+                //Turn off timer
+                TimerRunning = false;
             }
 
             else if(BoardObject.GameIsLost())
             {
                 ResetIcon.Source = ResetImageMap["dead"];
                 Title = "Minesweeper Classic (DEFEAT)";
+
+                //Turn off timer
+                TimerRunning = false;
             }
 
             else
@@ -234,6 +272,41 @@ namespace MinesweeperClassic
 
         }
 
+        private void TimerThreadMethod()
+        {
+            //Initialize the counter
+            int timerCounter = 0;
+            int tempCounter;
+
+            while(GameRunning)
+            {
+                while (TimerRunning && GameRunning)
+                {
+                    if(timerCounter <= 999)
+                    {
+                        //Write timer to display
+                        tempCounter = timerCounter;
+                        TimerHundredsPlace = tempCounter / 100;
+                        this.DispatcherQueue.TryEnqueue(() => HundredsPlaceTimer.Source = DisplayImageMap[TimerHundredsPlace]);
+                        tempCounter -= TimerHundredsPlace * 100;
+                        TimerTensPlace = tempCounter / 10;
+                        this.DispatcherQueue.TryEnqueue(() => TensPlaceTimer.Source = DisplayImageMap[TimerTensPlace]);
+                        tempCounter -= TimerTensPlace * 10;
+                        TimerOnesPlace = tempCounter;
+                        this.DispatcherQueue.TryEnqueue(() => OnesPlaceTimer.Source = DisplayImageMap[TimerOnesPlace]);
+
+
+                        //Increment timer
+                        Thread.Sleep(950);
+                        timerCounter++;
+                    }
+                }
+
+                //Reset the counter
+                timerCounter = 0;
+            }
+        }
+
         //Event handlers----------------------------------------------------------------------------------------------------------
         private void ResetIcon_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
@@ -257,6 +330,12 @@ namespace MinesweeperClassic
                 RepaintGameWindow();
                 Title = "Minesweeper Classic";
                 LeftClickHeld = false;
+
+                //Stop the timer and reset the timer counter
+                TimerRunning = false;
+                HundredsPlaceTimer.Source = DisplayImageMap[0];
+                TensPlaceTimer.Source = DisplayImageMap[0];
+                OnesPlaceTimer.Source = DisplayImageMap[0];
             }
 
         }
@@ -350,6 +429,9 @@ namespace MinesweeperClassic
             {
                 BoardObject.LeftClick(row,col);
                 LeftClickHeld = false;
+
+                //Ensure timer is on
+                TimerRunning = true;
             }
 
             //Handle the right clicks
@@ -409,6 +491,12 @@ namespace MinesweeperClassic
 
                 MiddleClickHeld = false;
             }
+        }
+
+        private void GameWindow_Closed(object sender, WindowEventArgs args)
+        {
+            //Signal that the Game is no longer running, killing the Timer thread
+            GameRunning = false;
         }
     }
 }

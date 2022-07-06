@@ -25,6 +25,15 @@
                    PointerCanceled="ResetIcon_PointerCanceled"
                    PointerCaptureLost="ResetIcon_PointerCanceled"
                    PointerExited="ResetIcon_PointerCanceled"/>
+
+            <Image x:Name="HundredsPlaceTimer"
+                   HorizontalAlignment="Left"/>
+
+            <Image x:Name="TensPlaceTimer"
+                   HorizontalAlignment="Left"/>
+
+            <Image x:Name="OnesPlaceTimer"
+                   HorizontalAlignment="Left"/>
         </StackPanel>
 
         <Border x:Name="GameBoardBorder" BorderThickness="1" BorderBrush="#808080">
