@@ -297,7 +297,7 @@ namespace MinesweeperClassic
 
 
                         //Increment timer
-                        Thread.Sleep(950);
+                        Thread.Sleep(1000);
                         timerCounter++;
                     }
                 }
