@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -52,6 +53,7 @@ namespace MinesweeperClassic
         public Thread TimerThread { get; private set; }
         public bool TimerRunning { get; private set; } = false; 
         public bool GameRunning { get; private set; } = true;
+        public int TimerCounter { get; private set; }
         public int TimerHundredsPlace { get; private set; }
         public int TimerTensPlace { get; private set; }
         public int TimerOnesPlace { get; private set; } 
@@ -67,6 +69,11 @@ namespace MinesweeperClassic
         {
             //Start up game
             BoardObject = new Board(rows, columns, mines);
+
+            //Ensure that the rows, columns and mines are consistent with the BoardObject (BoardObject will fix any out of bound parameters)
+            rows = (int)BoardObject.NumberOfRows;
+            columns = (int)BoardObject.NumberOfColumns;
+            mines = BoardObject.RemainingFlags;
 
             //Preload all images into dictionary, so the program doesn't constantly have to access the files
             PreloadImages();
@@ -275,36 +282,48 @@ namespace MinesweeperClassic
         private void TimerThreadMethod()
         {
             //Initialize the counter
-            int timerCounter = 0;
-            int tempCounter;
+            TimerCounter = 0;
+            System.Timers.Timer gameClock;
+            bool timerResetting;
 
             while(GameRunning)
             {
-                while (TimerRunning && GameRunning)
+                timerResetting = false;
+                gameClock = new System.Timers.Timer();
+                gameClock.Interval = 1000;
+                gameClock.Elapsed += GameClock_Elapsed;
+
+                while (TimerRunning)
                 {
-                    if(timerCounter <= 999)
-                    {
-                        //Write timer to display
-                        tempCounter = timerCounter;
-                        TimerHundredsPlace = tempCounter / 100;
-                        this.DispatcherQueue.TryEnqueue(() => HundredsPlaceTimer.Source = DisplayImageMap[TimerHundredsPlace]);
-                        tempCounter -= TimerHundredsPlace * 100;
-                        TimerTensPlace = tempCounter / 10;
-                        this.DispatcherQueue.TryEnqueue(() => TensPlaceTimer.Source = DisplayImageMap[TimerTensPlace]);
-                        tempCounter -= TimerTensPlace * 10;
-                        TimerOnesPlace = tempCounter;
-                        this.DispatcherQueue.TryEnqueue(() => OnesPlaceTimer.Source = DisplayImageMap[TimerOnesPlace]);
-
-
-                        //Increment timer
-                        Thread.Sleep(1000);
-                        timerCounter++;
-                    }
+                    gameClock.Start();
+                    timerResetting = true;
                 }
 
                 //Reset the counter
-                timerCounter = 0;
+                if(timerResetting)
+                {
+                    gameClock.Stop();
+                    gameClock.Close();
+                    TimerCounter = 0;
+                } 
             }
+        }
+
+        private void GameClock_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            TimerCounter++;
+            int tempCounter = TimerCounter;
+
+            //Write timer to display
+            tempCounter = TimerCounter;
+            TimerHundredsPlace = tempCounter / 100;
+            this.DispatcherQueue.TryEnqueue(() => HundredsPlaceTimer.Source = DisplayImageMap[TimerHundredsPlace]);
+            tempCounter -= TimerHundredsPlace * 100;
+            TimerTensPlace = tempCounter / 10;
+            this.DispatcherQueue.TryEnqueue(() => TensPlaceTimer.Source = DisplayImageMap[TimerTensPlace]);
+            tempCounter -= TimerTensPlace * 10;
+            TimerOnesPlace = tempCounter;
+            this.DispatcherQueue.TryEnqueue(() => OnesPlaceTimer.Source = DisplayImageMap[TimerOnesPlace]);
         }
 
         //Event handlers----------------------------------------------------------------------------------------------------------
@@ -497,6 +516,7 @@ namespace MinesweeperClassic
         {
             //Signal that the Game is no longer running, killing the Timer thread
             GameRunning = false;
+            TimerRunning = false;
         }
     }
 }

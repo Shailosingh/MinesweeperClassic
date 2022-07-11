@@ -110,10 +110,10 @@ namespace MinesweeperClassic
             //Get rows and column numbers
             int rowCount = (int)RowCount.Value;
             int colCount = (int)ColCount.Value;
-            int mineCount = (int)MineCount.Value;
 
             //Ensure that there is correct number of mines when game starts
             EnsureProperMineCount();
+            int mineCount = (int)MineCount.Value;
 
             //Pass the game board info into the game window and launch it
             GameWindow gameWindowInstance = new GameWindow(rowCount, colCount, mineCount);
