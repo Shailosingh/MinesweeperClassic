@@ -42,13 +42,15 @@ namespace MinesweeperClassic
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            /*
             //Set the board info        
             int rows = 16;
             int columns = 16;
             int mines = 30;
             m_window = new GameWindow(rows, columns, mines);
+            */
             
-            //m_window = new MainWindow();
+            m_window = new MainWindow();
             m_window.Activate();
         }
 

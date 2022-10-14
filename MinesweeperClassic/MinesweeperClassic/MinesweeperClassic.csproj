@@ -10,7 +10,8 @@
     <UseWinUI>true</UseWinUI>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="GameWindow.xaml" />
+    <None Remove="BoardSettingsPage.xaml" />
+    <None Remove="GamePage.xaml" />
     <None Remove="Images\Reset\smile.bmp" />
   </ItemGroup>
 
@@ -23,12 +24,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="GameWindow.xaml">
+    <Folder Include="Images\Display\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="GamePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\Display\" />
+    <Page Update="BoardSettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

@@ -1,24 +1,24 @@
-﻿using Microsoft.UI.Windowing;
+﻿using Microsoft.UI.Input;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using MinesweeperLibrary;
 using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Timers;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using MinesweeperLibrary;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,9 +26,9 @@ using MinesweeperLibrary;
 namespace MinesweeperClassic
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class GameWindow : Window
+    public sealed partial class GamePage : Page
     {
         //Constants
         public static int GRID_SQUARE_LENGTH { get; private set; } = 16;
@@ -51,22 +51,30 @@ namespace MinesweeperClassic
 
         //Timer thread tracker and variables
         public Thread TimerThread { get; private set; }
-        public bool TimerRunning { get; private set; } = false; 
+        public bool TimerRunning { get; private set; } = false;
         public bool GameRunning { get; private set; } = true;
         public int TimerCounter { get; private set; }
         public int TimerHundredsPlace { get; private set; }
         public int TimerTensPlace { get; private set; }
-        public int TimerOnesPlace { get; private set; } 
+        public int TimerOnesPlace { get; private set; }
 
         //Board backend object
         private Board BoardObject;
 
         //Window setting variables
         private OverlappedPresenter _presenter;
+        private MainWindow WindowObj;
 
-        //Constructor for the game window
-        public GameWindow(int rows, int columns, int mines)
+        public GamePage()
         {
+            //Grab the Window instance variable
+            WindowObj = MainWindow.CurrentInstance;
+
+            //Grab the board settings
+            int rows = MainWindow.Rows;
+            int columns = MainWindow.Cols;
+            int mines = MainWindow.Mines;
+
             //Start up game
             BoardObject = new Board(rows, columns, mines);
 
@@ -90,7 +98,7 @@ namespace MinesweeperClassic
             WindowHeight = gridHeight + resetPanelHeight + bottomBorderHeight;
 
             //Set the size of window taking into account DPI (https://stackoverflow.com/questions/67169712/winui-3-0-reunion-0-5-window-size)
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(WindowObj);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
             double dpi = (double)User32.GetDpiForWindow(hWnd);
@@ -104,7 +112,7 @@ namespace MinesweeperClassic
             _presenter.IsMinimizable = false;
 
             //Set the title of app
-            Title = "Minesweeper Classic";
+            WindowObj.Title = "Minesweeper Classic";
 
             this.InitializeComponent();
 
@@ -120,7 +128,7 @@ namespace MinesweeperClassic
             HundredsPlaceMine.Width = DISPLAY_SQUARE_WIDTH;
             HundredsPlaceMine.Height = DISPLAY_SQUARE_HEIGHT;
             HundredsPlaceMine.Source = DisplayImageMap[0];
-            HundredsPlaceMine.Margin = new Thickness(1+GRID_SQUARE_LENGTH, 0, 0, 0);
+            HundredsPlaceMine.Margin = new Thickness(1 + GRID_SQUARE_LENGTH, 0, 0, 0);
 
             TensPlaceMine.Width = DISPLAY_SQUARE_WIDTH;
             TensPlaceMine.Height = DISPLAY_SQUARE_HEIGHT;
@@ -136,7 +144,7 @@ namespace MinesweeperClassic
             ResetIcon.Width = RESET_SQUARE_LENGTH;
             ResetIcon.Height = RESET_SQUARE_LENGTH;
             ResetIcon.Source = ResetImageMap["smile"];
-            ResetIcon.Margin = new Thickness(gridWidth/2 - RESET_SQUARE_LENGTH/2 - 3*DISPLAY_SQUARE_WIDTH, 0, 0, 0);
+            ResetIcon.Margin = new Thickness(gridWidth / 2 - RESET_SQUARE_LENGTH / 2 - 3 * DISPLAY_SQUARE_WIDTH, 0, 0, 0);
 
             //Setup the Game Board canvas to proper sizes and margins
             GameBoardCanvas.Width = gridWidth;
@@ -147,7 +155,7 @@ namespace MinesweeperClassic
             HundredsPlaceTimer.Width = DISPLAY_SQUARE_WIDTH;
             HundredsPlaceTimer.Height = DISPLAY_SQUARE_HEIGHT;
             HundredsPlaceTimer.Source = DisplayImageMap[0];
-            HundredsPlaceTimer.Margin = new Thickness(gridWidth/2 - RESET_SQUARE_LENGTH/2 - 3*DISPLAY_SQUARE_WIDTH, 0, 0, 0);
+            HundredsPlaceTimer.Margin = new Thickness(gridWidth / 2 - RESET_SQUARE_LENGTH / 2 - 3 * DISPLAY_SQUARE_WIDTH, 0, 0, 0);
 
             TensPlaceTimer.Width = DISPLAY_SQUARE_WIDTH;
             TensPlaceTimer.Height = DISPLAY_SQUARE_HEIGHT;
@@ -160,8 +168,8 @@ namespace MinesweeperClassic
             OnesPlaceTimer.Margin = new Thickness(0, 0, 0, 0);
 
             //Setup the Game Board's border
-            GameBoardBorder.Width = gridWidth+1;
-            GameBoardBorder.Height = gridHeight+2;
+            GameBoardBorder.Width = gridWidth + 1;
+            GameBoardBorder.Height = gridHeight + 2;
 
             //Add grid cells as children to the canvas
             for (int cellIndex = 0; cellIndex < rows * columns; cellIndex++)
@@ -186,7 +194,7 @@ namespace MinesweeperClassic
             TimerThread.Start();
 
             //Create exit handler
-            this.Closed += GameWindow_Closed;
+            WindowObj.Closed += GameWindow_Closed;
         }
 
         private void PreloadImages()
@@ -211,9 +219,9 @@ namespace MinesweeperClassic
             GridImageMap.Add(7, new BitmapImage(new Uri("ms-appx:///Images/Grid/7.bmp")));
             GridImageMap.Add(8, new BitmapImage(new Uri("ms-appx:///Images/Grid/8.bmp")));
             GridImageMap.Add(9, new BitmapImage(new Uri("ms-appx:///Images/Grid/flag.bmp")));
-            GridImageMap.Add(10,new BitmapImage(new Uri("ms-appx:///Images/Grid/highlight.bmp")));
-            GridImageMap.Add(11,new BitmapImage(new Uri("ms-appx:///Images/Grid/mine.bmp")));
-            GridImageMap.Add(12,new BitmapImage(new Uri("ms-appx:///Images/Grid/cell.bmp")));
+            GridImageMap.Add(10, new BitmapImage(new Uri("ms-appx:///Images/Grid/highlight.bmp")));
+            GridImageMap.Add(11, new BitmapImage(new Uri("ms-appx:///Images/Grid/mine.bmp")));
+            GridImageMap.Add(12, new BitmapImage(new Uri("ms-appx:///Images/Grid/cell.bmp")));
 
             //The map that maps integers to their Display (7-segment display) images
             DisplayImageMap = new Dictionary<int, BitmapImage>();
@@ -234,19 +242,19 @@ namespace MinesweeperClassic
         private void RepaintGameWindow()
         {
             //Update the reset button
-            if(BoardObject.GameIsWon())
+            if (BoardObject.GameIsWon())
             {
                 ResetIcon.Source = ResetImageMap["sunglasses"];
-                Title = "Minesweeper Classic (VICTORY)";
+                WindowObj.Title = "Minesweeper Classic (VICTORY)";
 
                 //Turn off timer
                 TimerRunning = false;
             }
 
-            else if(BoardObject.GameIsLost())
+            else if (BoardObject.GameIsLost())
             {
                 ResetIcon.Source = ResetImageMap["dead"];
-                Title = "Minesweeper Classic (DEFEAT)";
+                WindowObj.Title = "Minesweeper Classic (DEFEAT)";
 
                 //Turn off timer
                 TimerRunning = false;
@@ -270,10 +278,10 @@ namespace MinesweeperClassic
             int remainingMines = BoardObject.GetRemainingFlags();
             int hundredsPlace = remainingMines / 100;
             HundredsPlaceMine.Source = DisplayImageMap[hundredsPlace];
-            remainingMines -= hundredsPlace*100;
+            remainingMines -= hundredsPlace * 100;
             int tensPlace = remainingMines / 10;
             TensPlaceMine.Source = DisplayImageMap[tensPlace];
-            remainingMines -= tensPlace*10;
+            remainingMines -= tensPlace * 10;
             int onesPlace = remainingMines;
             OnesPlaceMine.Source = DisplayImageMap[onesPlace];
 
@@ -286,7 +294,7 @@ namespace MinesweeperClassic
             System.Timers.Timer gameClock;
             bool timerResetting;
 
-            while(GameRunning)
+            while (GameRunning)
             {
                 timerResetting = false;
                 gameClock = new System.Timers.Timer();
@@ -300,12 +308,12 @@ namespace MinesweeperClassic
                 }
 
                 //Reset the counter
-                if(timerResetting)
+                if (timerResetting)
                 {
                     gameClock.Stop();
                     gameClock.Close();
                     TimerCounter = 0;
-                } 
+                }
             }
         }
 
@@ -333,7 +341,7 @@ namespace MinesweeperClassic
             PointerPoint eventPoint = e.GetCurrentPoint(ResetIcon);
 
             //Ensure it is the left mouse button and then change the reset button to a clicked version
-            if(eventPoint.Properties.IsLeftButtonPressed)
+            if (eventPoint.Properties.IsLeftButtonPressed)
             {
                 ResetIcon.Source = ResetImageMap["smileClicked"];
                 LeftClickHeld = true;
@@ -347,7 +355,7 @@ namespace MinesweeperClassic
             {
                 BoardObject.Reset();
                 RepaintGameWindow();
-                Title = "Minesweeper Classic";
+                WindowObj.Title = "Minesweeper Classic";
                 LeftClickHeld = false;
 
                 //Stop the timer and reset the timer counter
@@ -362,7 +370,7 @@ namespace MinesweeperClassic
         private void ResetIcon_PointerCanceled(object sender, PointerRoutedEventArgs e)
         {
             //Ensure that left click was already held, before putting the reset button back to normal
-            if(LeftClickHeld)
+            if (LeftClickHeld)
             {
                 ResetIcon.Source = ResetImageMap["smile"];
                 LeftClickHeld = false;
@@ -373,7 +381,7 @@ namespace MinesweeperClassic
         private void GameBoardCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             //Don't do anything if someone tries to click the grid when the game is no longer running
-            if(!BoardObject.GameStillRunning())
+            if (!BoardObject.GameStillRunning())
             {
                 return;
             }
@@ -390,9 +398,9 @@ namespace MinesweeperClassic
 
             //Handle the left click holds
             if (eventPoint.Properties.IsLeftButtonPressed)
-            { 
+            {
                 //Ensure that the cell to be clicked isn't already clicked in some way
-                if(BoardObject.CellVisualStatus(row, col) == 12)
+                if (BoardObject.CellVisualStatus(row, col) == 12)
                 {
                     //Highlight the held square
                     ((Image)e.OriginalSource).Source = GridImageMap[10];
@@ -405,13 +413,13 @@ namespace MinesweeperClassic
             }
 
             //Handle the right click holds
-            else if(eventPoint.Properties.IsRightButtonPressed)
+            else if (eventPoint.Properties.IsRightButtonPressed)
             {
                 RightClickHeld = true;
             }
 
             //Handle the middle click holds
-            else if(eventPoint.Properties.IsMiddleButtonPressed)
+            else if (eventPoint.Properties.IsMiddleButtonPressed)
             {
                 //Hold down the board at this position
                 BoardObject.BothClickHoldDown(row, col);
@@ -446,7 +454,7 @@ namespace MinesweeperClassic
             //Handle the left clicks
             if (LeftClickHeld)
             {
-                BoardObject.LeftClick(row,col);
+                BoardObject.LeftClick(row, col);
                 LeftClickHeld = false;
 
                 //Ensure timer is on
@@ -456,14 +464,14 @@ namespace MinesweeperClassic
             //Handle the right clicks
             else if (RightClickHeld)
             {
-                BoardObject.RightClick(row,col);
+                BoardObject.RightClick(row, col);
                 RightClickHeld = false;
             }
 
             //Handle the middle clicks
             else if (MiddleClickHeld)
             {
-                BoardObject.BothClickRelease(row,col); 
+                BoardObject.BothClickRelease(row, col);
                 MiddleClickHeld = false;
             }
 
