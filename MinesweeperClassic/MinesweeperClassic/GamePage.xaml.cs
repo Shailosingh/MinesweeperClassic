@@ -104,7 +104,7 @@ namespace MinesweeperClassic
             double dpi = (double)User32.GetDpiForWindow(hWnd);
             double scaling = dpi / 96;
             appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = (int)(WindowWidth * scaling), Height = (int)(WindowHeight * scaling) });
-
+            
             //Fix the size of the window (https://github.com/microsoft/WindowsAppSDK/discussions/1694)
             _presenter = appWindow.Presenter as OverlappedPresenter;
             _presenter.IsResizable = false;

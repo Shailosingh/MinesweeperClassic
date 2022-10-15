@@ -13,6 +13,10 @@
     <None Remove="BoardSettingsPage.xaml" />
     <None Remove="GamePage.xaml" />
     <None Remove="Images\Reset\smile.bmp" />
+    <None Remove="Logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Logo.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -16,6 +16,8 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using MinesweeperLibrary;
 using Windows.Devices.Geolocation;
+using Microsoft.UI;
+using Windows.ApplicationModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,6 +40,12 @@ namespace MinesweeperClassic
 
             //Record the current instance of the window so, it can be accessed by pages
             CurrentInstance = this;
+
+            //Set icon of window
+            IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+            var appWindow = AppWindow.GetFromWindowId(windowId);
+            appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, "Logo.ico"));
 
             //Navigate to the Board Settings Page
             ContentFrame.Navigate(typeof(BoardSettingsPage));
