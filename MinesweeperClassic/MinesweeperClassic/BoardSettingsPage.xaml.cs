@@ -31,6 +31,7 @@ namespace MinesweeperClassic
         private uint MAX_ROWS = Board.MAX_ROWS;
         private uint MIN_COLS = Board.MIN_COLS;
         private uint MAX_COLS = Board.MAX_COLS;
+        private uint MAX_MINES = 999;
 
         //Window size constants
         private int WIDTH = 650;
@@ -139,10 +140,10 @@ namespace MinesweeperClassic
                 MineCount.Value = 1;
             }
 
-            //Ensure that there is at least one free space
-            else if (MineCount.Value >= totalSquares)
+            //Ensure that there aren't more mines than the three digit display can support
+            else if (MineCount.Value > MAX_MINES)
             {
-                MineCount.Value = totalSquares - 1;
+                MineCount.Value = MAX_MINES;
             }
         }
     }
