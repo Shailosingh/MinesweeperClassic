@@ -270,12 +270,16 @@ namespace MinesweeperClassic
             {
                 for (int colIndex = 0; colIndex < BoardObject.NumberOfColumns; colIndex++)
                 {
-                    ((Image)GameBoardCanvas.Children[(rowIndex * (int)(BoardObject.NumberOfRows)) + colIndex]).Source = GridImageMap[BoardObject.CellVisualStatus(rowIndex, colIndex)];
+                    ((Image)GameBoardCanvas.Children[(rowIndex * (int)(BoardObject.NumberOfColumns)) + colIndex]).Source = GridImageMap[BoardObject.CellVisualStatus(rowIndex, colIndex)];
                 }
             }
 
-            //Update mine count display
+            //Update mine count display (ensure that the mine count is not negative)
             int remainingMines = BoardObject.GetRemainingFlags();
+            if (remainingMines < 0)
+            {
+                remainingMines = 0;
+            }
             int hundredsPlace = remainingMines / 100;
             HundredsPlaceMine.Source = DisplayImageMap[hundredsPlace];
             remainingMines -= hundredsPlace * 100;
