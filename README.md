@@ -3,6 +3,10 @@
 
 Enjoy a free remake of the old Minesweeper you know and love from Windows XP. This remake is free of ads and offers hours of fun.
 
+![image](https://user-images.githubusercontent.com/52577016/202805817-922e6511-c73b-44aa-aeb7-75040c3f9958.png)
+![image](https://user-images.githubusercontent.com/52577016/202806414-80fb20ad-8c15-4ef0-b910-fbb27a9cef6a.png)
+![image](https://user-images.githubusercontent.com/52577016/202805966-11e02e02-16b6-4c30-b97f-4c914e0dd622.png)
+
 ## Controls
 Left-Click: Uncover a square.
 
