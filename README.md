@@ -19,3 +19,6 @@ essential for advanced strategies such as chording.
 ## Technologies
 This application was written using C# and WinUI 3. The backend code for the logic of Minesweeper, is handled for me by my NuGET package 
 [Minesweeper Library](https://github.com/Shailosingh/MinesweeperLibrary).
+
+## Privacy Policy
+This app collects no information on any users. It is simply a free Minesweeper game with no ads.
