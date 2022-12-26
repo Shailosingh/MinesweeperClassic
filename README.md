@@ -17,7 +17,7 @@ If it doesn't have the correct number or is just a covered square, it will simpl
 essential for advanced strategies such as chording.
 
 ## Technologies
-This application was written using C# and WinUI 3. The backend code for the logic of Minesweeper, is handled for me by my NuGET package 
+This application was written using C# and WinUI 3. The backend code for the logic of Minesweeper, is handled by my NuGET package 
 [Minesweeper Library](https://github.com/Shailosingh/MinesweeperLibrary).
 
 ## Privacy Policy
