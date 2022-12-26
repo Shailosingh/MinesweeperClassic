@@ -7,13 +7,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="66a6238f-673e-4ceb-978c-7db5953f3087"
-    Publisher="CN=compu"
+    Name="61424ShailendraSinghSoftw.44386E29E9F0D"
+    Publisher="CN=A0D006BA-D01D-40DC-903A-B1BBE749D3F3"
     Version="1.0.1.0" />
 
   <Properties>
-    <DisplayName>MinesweeperClassic (Package)</DisplayName>
-    <PublisherDisplayName>compu</PublisherDisplayName>
+    <DisplayName>Minesweeper Classic!</DisplayName>
+    <PublisherDisplayName>Shailendra Singh Software</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
