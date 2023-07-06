@@ -1,11 +1,11 @@
 # MineMaster (Previously Minesweeper Classic!)
-![Logo](https://user-images.githubusercontent.com/52577016/202794944-553b5046-b75f-44d6-9958-1abe698eba9b.png)
+![Logo](https://github.com/Shailosingh/MinesweeperClassic/assets/52577016/3007f5c5-fdeb-478c-8519-d08253f7f973)
 
 Enjoy a free remake of the old Minesweeper you know and love from Windows XP. This remake is free of ads and offers hours of fun.
 
-![image](https://user-images.githubusercontent.com/52577016/202805817-922e6511-c73b-44aa-aeb7-75040c3f9958.png)
-![image](https://user-images.githubusercontent.com/52577016/202806414-80fb20ad-8c15-4ef0-b910-fbb27a9cef6a.png)
-![image](https://user-images.githubusercontent.com/52577016/202805966-11e02e02-16b6-4c30-b97f-4c914e0dd622.png)
+![Normal](https://github.com/Shailosingh/MinesweeperClassic/assets/52577016/59e974b6-6ea1-4c2c-aada-213e96e18a07)
+![Victory](https://github.com/Shailosingh/MinesweeperClassic/assets/52577016/b814b4ad-bead-4ca8-8b9e-2ac39a60bc7e)
+![Defeat](https://github.com/Shailosingh/MinesweeperClassic/assets/52577016/358dc3e0-648f-4cc9-a97e-d9309f684498)
 
 ## Controls
 Left-Click: Uncover a square.
