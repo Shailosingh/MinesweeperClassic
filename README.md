@@ -1,4 +1,4 @@
-# MinesweeperClassic
+# MineMaster (Previously Minesweeper Classic!)
 ![Logo](https://user-images.githubusercontent.com/52577016/202794944-553b5046-b75f-44d6-9958-1abe698eba9b.png)
 
 Enjoy a free remake of the old Minesweeper you know and love from Windows XP. This remake is free of ads and offers hours of fun.
